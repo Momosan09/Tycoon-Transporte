@@ -84,7 +84,14 @@ public class MovimientoCamara implements InputProcessor{
 
 	@Override
 	public boolean scrolled(float amountX, float amountY) {
-		return false;
+		camara.zoom += amountY;
+		if(camara.zoom < 1) {
+			camara.zoom = 1;
+		}else if(camara.zoom > 5){
+			camara.zoom = 5;
+		}
+		camara.update();
+		return true;
 	}
 
 }

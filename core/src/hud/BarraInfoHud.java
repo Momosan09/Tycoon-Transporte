@@ -1,9 +1,12 @@
 package hud;
 
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import eventos.EventoAgregarRuta;
 import eventos.EventoObjetoDelMapaClickeado;
@@ -14,6 +17,7 @@ import mapa.transporte.Ruta;
 import pantallas.juegoGlobales.GlobalesJuego;
 import utiles.Colores;
 import utiles.EstiloFuente;
+import utiles.Recursos;
 
 public class BarraInfoHud extends Table implements EventoAgregarRuta, EventoObjetoDelMapaClickeado{
 	
@@ -21,8 +25,10 @@ public class BarraInfoHud extends Table implements EventoAgregarRuta, EventoObje
 	private Label label;
 	private Label rutasLbl;
 	private TablaInfoSobreLaIndustria infoIndustria;
+	private Label cantidadVehiculos;
 
 	private Label.LabelStyle estiloLabel = EstiloFuente.generarFuente(20, Colores.BLANCO, false);
+	private Skin skin = new Skin(Gdx.files.internal(Recursos.RUTA_BOTONES));
 	
 	
 	public BarraInfoHud() {
@@ -50,19 +56,29 @@ public class BarraInfoHud extends Table implements EventoAgregarRuta, EventoObje
 	
 	private void agregarRutasAlHUD(String clave) {
 		
-		Ruta ruta = GlobalesJuego.mapa.getRuta(clave);
+		final Ruta ruta = GlobalesJuego.mapa.getRuta(clave);
 		Table tabla = new Table();
 		Label nombre = new Label(ruta.nombre, estiloLabel);
 		Label vehiculosLbl = new Label("Vehiculos= ", estiloLabel);
 		Label cantidadVehiculos = new Label(ruta.getCantidadDeVehiculos()+"", estiloLabel);
+		this.cantidadVehiculos = cantidadVehiculos;
+		TextButton boton = new TextButton("Agregar auto", skin);
+		
+		boton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            	ruta.agregarVehiculo();
+            	refrescarTextos(ruta);
+            }
+        });
 		
 		tabla.add(nombre);
 		tabla.row();
 		tabla.add(vehiculosLbl);
 		tabla.add(cantidadVehiculos);
+		tabla.add(boton);
 		this.row();
 		this.add(tabla);
-		
 	}
 
 
@@ -80,5 +96,10 @@ public class BarraInfoHud extends Table implements EventoAgregarRuta, EventoObje
 		String cantidad = String.valueOf(om.getCantidad());
 		infoIndustria.setValores(om.getNombre(), tipo, cantidad , "no");
 	}
+	
+	private void refrescarTextos(Ruta r) {
+		cantidadVehiculos.setText(r.getCantidadDeVehiculos());
+	}
+	
 	
 }

@@ -38,3 +38,5 @@
     - Movimiento para la camara con el raton
     - Se pueden guardar multiples rutas
     - Al clickear un objeto del mapa, se muestra su info en el hud
+    - Agrega zoom para la camara
+    - boton para agregar autos a una ruta existente

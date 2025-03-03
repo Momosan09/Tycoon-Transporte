@@ -32,4 +32,8 @@ public class Ruta {
 	public int getCantidadDeVehiculos() {
 		return autos.size();
 	}
+	
+	public void agregarVehiculo() {
+		autos.add(new Auto(0,0,this.camino));
+	}
 }

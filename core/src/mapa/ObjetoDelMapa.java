@@ -35,6 +35,13 @@ public abstract class ObjetoDelMapa extends Tile{
 		solida=false;
 	}
 	
+	public ObjetoDelMapa(float x, float y, String nombre) {
+		super(x, y, nombre);
+		sprite.setX(this.x);
+		sprite.setY(this.y);
+		solida=false;
+	}
+	
 	@Override
 	public void onClick() {
 		Listeners.objetoDelMapaClickeado(this);

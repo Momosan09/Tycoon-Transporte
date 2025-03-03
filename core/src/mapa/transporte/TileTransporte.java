@@ -16,14 +16,14 @@ public abstract class TileTransporte extends ObjetoDelMapa{
 	protected boolean fin;
 	
 	public TileTransporte(String rutaTextura, float x, float y) {
-		super(rutaTextura,x, y, DireccionCalle.CALLE_HORIZONTAL.getNombre());
+		super(rutaTextura,x, y, DireccionCalle.CALLE_HORIZONTAL.getNombre(), -1);
 		this.ruta = rutaTextura;
 		this.setTextura(prepararTextura(rutaTextura));
 		solida = false;
 	}
 
 	public TileTransporte(String rutaTextura, float x, float y, DireccionCalle direccion) {
-		super(rutaTextura,x, y, direccion.getNombre());
+		super(rutaTextura,x, y, direccion.getNombre(),-1);
 		this.direccion = direccion;
 		this.ruta = rutaTextura;
 		this.setTextura(prepararTextura(rutaTextura));
