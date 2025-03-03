@@ -1,0 +1,14 @@
+{
+com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
+	default: {
+		imageUp: botonAgregarCalleUp
+		imageDown: botonAgregarCalleDown
+		imageOver: botonAgregarCalleOver
+	}
+	agregarRutas: {
+		imageUp: botonAgregarRutasUp
+		imageDown: botonAgregarRutasDown
+		imageOver: botonAgregarRutasOver
+	}
+}
+}
