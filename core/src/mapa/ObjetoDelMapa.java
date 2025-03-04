@@ -9,12 +9,18 @@ import enums.DireccionCalle;
 import eventos.Listeners;
 import utiles.Recursos;
 import utiles.Render;
+import utiles.Tiempo;
 
 public abstract class ObjetoDelMapa extends Tile{
 
 	protected Sprite sprite;
 	protected Texture textura;
 	protected float cons_prod; //Lo que consume o produce, dependiendo de la instancia
+	protected float produccion_por_cantidad_tiempo = 4f;
+	protected float cantidadAlmacenada = 0;
+	
+	private Tiempo tiempo;
+	private boolean esperando;
 	
 	
 	public ObjetoDelMapa(String rutaTextura, float x, float y, String nombre, float cons_prod) {
@@ -25,6 +31,7 @@ public abstract class ObjetoDelMapa extends Tile{
 		sprite.setX(this.x);
 		sprite.setY(this.y);
 		solida=false;
+		tiempo = new Tiempo();
 	}
 	
 	public ObjetoDelMapa(float x, float y, String nombre, float cons_prod) {
@@ -52,6 +59,12 @@ public abstract class ObjetoDelMapa extends Tile{
 		sprite.draw(Render.batch);
 	}
 	
+	public void producir() {
+	    cantidadAlmacenada += cons_prod;
+	    //System.out.println(nombre + " producción manual de " + cons_prod + ". Total almacenado: " + cantidadAlmacenada);
+	}
+
+	
 	public void setTextura(TextureRegion t) {
 		sprite = new Sprite(t);
 		sprite.setX(x);
@@ -75,6 +88,27 @@ public abstract class ObjetoDelMapa extends Tile{
 	public float getCantidad() {
 		return cons_prod;
 	};
+	
+	public float getCantidadAlmacenada() {
+		return cantidadAlmacenada;
+	}
+	
+	public void actualizar() {
+	    if (tiempo.esperarTiempo(2000)) { // Cada 2000 ms (2 segundos)
+	        cantidadAlmacenada += cons_prod; // Suma lo que produce o consume
+	        Listeners.industriaPasoElTiempo(this);
+	    }
+	}
+
+	public float pasarCargaAlVehiculo(float cantidad) {
+		cantidadAlmacenada -= cantidad;
+		return cantidad;
+	}
+	
+	public float venderALaIndustria(float cantidad) {
+		cantidadAlmacenada += cantidad;
+		return 200;
+	}
 	
 	
 }

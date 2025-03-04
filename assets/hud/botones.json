@@ -45,6 +45,12 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		imageOver: botonAgregarRutasOver
 	}
 }
+com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
+	default: {
+		background: fondo
+		vScrollKnob: textButtonUp
+	}
+}
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
 		font: PixelOperator1

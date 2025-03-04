@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setTitle("Tycoon");
-		config.setWindowedMode(740, 740);
+		config.setWindowedMode(940, 740);
 
 		new Lwjgl3Application(new Principal(), config);
 	}

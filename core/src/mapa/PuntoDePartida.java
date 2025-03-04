@@ -9,12 +9,14 @@ import jugador.HabilidadesJugador;
 import pantallas.juegoGlobales.GlobalesJuego;
 import utiles.Recursos;
 import utiles.Render;
+import utiles.Tiempo;
 import utiles.Util;
 
 public abstract class PuntoDePartida extends ObjetoDelMapa{
 
 
 	protected String rutaTexturaOrig;
+
 	
 	
 	

@@ -42,7 +42,7 @@ public class HudPrincipal extends Stage{
 		tabla.add(barraDer).size(Configs.anchoPantalla/4f, Configs.altoPantalla);
 		contenedor.add(tabla).grow();
 		this.addActor(contenedor);
-		this.setDebugAll(true);
+		this.setDebugAll(false);
 
 		barraIz.setBackground(new SpriteDrawable(new Sprite(new Texture(Recursos.RUTA_FONDO))));
 		barraDer.setBackground(new SpriteDrawable(new Sprite(new Texture(Recursos.RUTA_FONDO))));

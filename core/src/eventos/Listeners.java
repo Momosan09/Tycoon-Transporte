@@ -45,4 +45,20 @@ public abstract class Listeners {
 		}
 	}
 	
+	public static void industriaPasoElTiempo(ObjetoDelMapa om) {
+		for (EventListener listener : listeners) {
+			if((listener instanceof EventoPasoDelTiempoIndustrias)) {
+				((EventoPasoDelTiempoIndustrias)listener).pasoTiempo(om);
+			}
+		}
+	}
+	
+	public static void seGanoDinero() {
+		for (EventListener listener : listeners) {
+			if((listener instanceof EventoSeGanoDinero)) {
+				((EventoSeGanoDinero)listener).seGanoDinero();
+			}
+		}
+	}
+	
 }

@@ -7,21 +7,28 @@ import com.badlogic.gdx.math.Vector3;
 import entradas.Entradas;
 import enums.DireccionCalle;
 import enums.Esquina;
+import enums.Recurso;
 import eventos.EventoPonerCalle;
 import eventos.Listeners;
 import jugador.Habilidades;
 import jugador.HabilidadesJugador;
 import mapa.puntoDePartida.FabricaCarbon;
+import mapa.puntoDePartida.FabricaComida;
+import mapa.puntoDePartida.FabricaDinero;
+import mapa.puntoDePartida.FabricaHierro;
+import mapa.puntoDePartida.FabricaMadera;
 import mapa.puntoMuerto.FabricaEnergia;
 import mapa.transporte.Calle;
 import mapa.transporte.TileTransporte;
 import pantallas.juegoGlobales.GlobalesJuego;
 import utiles.DireccionClickTileTransporte;
 import utiles.Render;
+import utiles.Util;
 import vehiculos.Auto;
 import mapa.transporte.Ruta;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -45,7 +52,7 @@ public class Mapa implements InputProcessor, EventoPonerCalle{
     public ArrayList<Auto> autos = new ArrayList<>();
     
     private Vector2 dimensiones;
-
+    private int ancho, alto;
     public Mapa() {
         this.calles = new HashMap<>();
         this.puntosDePartida = new HashMap<>();
@@ -57,8 +64,8 @@ public class Mapa implements InputProcessor, EventoPonerCalle{
     // Método para inicializar el mapa, agregando tiles vacíos y otros elementos
     public void inicializar(int ancho, int alto) {
     	crearTiles(ancho, alto);//Las tiles tienen que ser las ultimas en agregarse para que funcione bien el inputevent de los demas
-    	crearPuntosDePartida();
-    	crearPuntosMuerto();
+    	crearPuntosDePartida((int) ancho / 4);
+    	crearPuntosMuerto(((int) ancho / 4)-1);
     }
 
     // Método para agregar una calle al mapa
@@ -84,6 +91,8 @@ public class Mapa implements InputProcessor, EventoPonerCalle{
 			}
 			
 		}
+		this.ancho = tiles.length-1;
+		this.alto = tiles[0].length-1;
 		dimensiones = new Vector2(tiles.length*64, tiles[0].length*64);
 	}
     
@@ -125,20 +134,72 @@ public class Mapa implements InputProcessor, EventoPonerCalle{
         // Crear y agregar estructuras en el mapa según el tipo
         // Ejemplo: un semáforo o un edificio
     }
+    
+    private void crearPuntosDePartida(int cantidad) {
+        for (int i = 0; i < cantidad; i++) {
+            Vector2 posicion = generarPosicionValida(puntosDePartida);
 
-    private void crearPuntosDePartida() {
-        FabricaCarbon fabricaCarbon = new FabricaCarbon(1, 1);
-        puntosDePartida.put(new Vector2(1, 1), fabricaCarbon);
-        tiles[1][1] = fabricaCarbon;
+            int tipoIndustria = Util.generarAleatorio(0, Recurso.values().length);
+            PuntoDePartida fabrica = crearPuntoPartidaPorTipo(tipoIndustria, (int) posicion.x, (int) posicion.y);
 
+            puntosDePartida.put(posicion, fabrica);
+            tiles[(int) posicion.x][(int) posicion.y] = fabrica;
+        }
+    }
+    
+    private void crearPuntosMuerto(int cantidad) {
+        for (int i = 0; i < cantidad; i++) {
+            Vector2 posicion = generarPosicionValida(puntosMuerto);
+
+            int tipoIndustria = Util.generarAleatorio(0, Recurso.values().length);
+            PuntoMuerto fabrica = crearPuntoMuertoPorTipo(tipoIndustria, (int) posicion.x, (int) posicion.y);
+
+            puntosMuerto.put(posicion, fabrica);
+            tiles[(int) posicion.x][(int) posicion.y] = fabrica;
+        }
     }
 
-    private void crearPuntosMuerto() {
-        FabricaEnergia fabricaEnergia = new FabricaEnergia(5, 1, 64);
-        puntosMuerto.put(new Vector2(5, 1), fabricaEnergia);
-        tiles[5][1] = fabricaEnergia;
-        
+    private Vector2 generarPosicionValida(Map<Vector2, ?> mapa) {
+        int x, y;
+        Vector2 pos;
+
+        do {
+            x = Util.generarAleatorio(0, (int) ancho);
+            y = Util.generarAleatorio(0, (int) alto);
+            pos = new Vector2(x, y);
+        } while (ocupado(mapa, x, y));
+
+        return pos;
     }
+    
+    private boolean ocupado(Map<Vector2, ?> mapa, int x, int y) {
+        return mapa.containsKey(new Vector2(x, y)) ||
+               mapa.containsKey(new Vector2(x - 1, y)) ||
+               mapa.containsKey(new Vector2(x + 1, y)) ||
+               mapa.containsKey(new Vector2(x, y - 1)) ||
+               mapa.containsKey(new Vector2(x, y + 1));
+    }
+
+
+    private PuntoDePartida crearPuntoPartidaPorTipo(int tipo, int x, int y) {
+        switch (tipo) {
+            case 0: return new FabricaCarbon(x, y);
+            case 1: return new FabricaComida(x, y);
+            case 2: return new FabricaMadera(x, y);
+            case 3: return new FabricaHierro(x, y);
+            case 4: return new FabricaDinero(x, y);
+            default: return new FabricaCarbon(x, y);
+        }
+    }
+    
+    private PuntoMuerto crearPuntoMuertoPorTipo(int tipo, int x, int y) {
+        switch (tipo) {
+            case 0: return new FabricaEnergia(x, y);
+            default: return new FabricaEnergia(x, y);
+        }
+    }
+
+   
 
 
     // Getter para la lista de calles
@@ -149,6 +210,7 @@ public class Mapa implements InputProcessor, EventoPonerCalle{
 	private void dibujarPuntosDePartida() {
 		for (PuntoDePartida puntoDePartida : puntosDePartida.values()) {
 			puntoDePartida.dibujar();
+			puntoDePartida.actualizar();
 		}
 	}
 	
@@ -173,7 +235,7 @@ public class Mapa implements InputProcessor, EventoPonerCalle{
 		}
 	}
     
-    // Método de renderizado si es necesario, aunque se realiza en otro lugar (como en Habilidades)
+    // Metodo de renderizado si es necesario, aunque se realiza en otro lugar (como en Habilidades)
     public void dibujar() {
     	dibujarCalles();
     	dibujarPuntosDePartida();
@@ -488,17 +550,21 @@ public class Mapa implements InputProcessor, EventoPonerCalle{
     		}
     		
     		if(currentNode == endNode) {
-    			System.out.println("A* LLEGUE");
-    			goalReached = true;
-    			trackThePath();
-    			
-    			
-    			String claveDefecto = "ruta"+rutas.size();
-    			Ruta ruta = new Ruta(claveDefecto, camino);
-    			
-    			rutas.put(ruta.nombre, ruta);
-    			Listeners.rutaAgregada(ruta.nombre);
+    		    System.out.println("A* LLEGUE");
+    		    goalReached = true;
+    		    trackThePath();
+
+    		    String claveDefecto = "ruta"+rutas.size();
+
+    		    // Copiamos el camino antes de pasarlo a la ruta
+    		    ArrayList<TileTransporte> caminoCopia = new ArrayList<>(camino);
+
+    		    Ruta ruta = new Ruta(claveDefecto, caminoCopia, startNode, endNode);
+
+    		    rutas.put(ruta.nombre, ruta);
+    		    Listeners.rutaAgregada(ruta.nombre);
     		}
+
     		buscandoIntento++;
     	}
 

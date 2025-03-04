@@ -39,5 +39,10 @@
     - Se pueden guardar multiples rutas
     - Al clickear un objeto del mapa, se muestra su info en el hud
     - Agrega zoom para la camara
-    - boton para agregar autos a una ruta existente
+    - Boton para agregar autos a una ruta existente
     - Varios vehiculos en la misma ruta
+
+# DIA 6
+    - Toca un poco el HUD
+    - Agrega creacion aleatoria del mapa
+    - Se puede ganar dinero

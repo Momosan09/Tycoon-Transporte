@@ -9,7 +9,11 @@ import com.badlogic.gdx.math.Vector2;
 
 import audio.MAudio;
 import enums.DireccionCalle;
+import eventos.Listeners;
+import mapa.PuntoDePartida;
+import mapa.PuntoMuerto;
 import mapa.transporte.TileTransporte;
+import pantallas.juegoGlobales.GlobalesJuego;
 import utiles.Render;
 import utiles.Tiempo;
 
@@ -23,7 +27,8 @@ public abstract class Vehiculo {
     protected boolean volviendo = false, esperando = false, descargando = false, cargando = false;
     protected int tiempoDeEsperaCarga = 2000, tiempoEsperaDescarga = 1000;
     protected Tiempo tiempo;//No es abstracta porque el metodo static de esperar tiempo trae problemas cuando es mas de un vehiculo esperando. cada vehiculo necesita una instancia propia del tiempo
-
+    protected float cargaTransportando = 0;
+    
     public Vehiculo(float x, float y, String rutaTextura, float velocidad, int capacidadDeCarga, ArrayList<TileTransporte> camino) {
         this.posicion = new Vector2(x, y);
         this.spr = new Sprite(new Texture(rutaTextura));
@@ -41,14 +46,13 @@ public abstract class Vehiculo {
         spr.draw(Render.batch);
     }
 
-    public void circular() {
+    public void circular(PuntoDePartida pp, PuntoMuerto pm) {
         if (esperando) {
             if (tiempo.esperarTiempo(2000)) { // Si ya paso el tiempo de espera
                 esperando = false;
                 velocidad = 100;
                 tiempo.reset(); // Reinicia el temporizador para futuras pausas
                 if(descargando) {
-                    MAudio.reproducirDescargaDeMercancias();
                     descargando = false;
                 }
                 
@@ -73,17 +77,20 @@ public abstract class Vehiculo {
 
         // Si estamos lo suficientemente cerca de la siguiente tile, actualizar
         if (posicion.dst(siguiente.x, siguiente.y) < 2) {
-            avanzarTile();
+            avanzarTile(pp,pm);
         }
     }
 
-    private void avanzarTile() {
+    private void avanzarTile(PuntoDePartida pp, PuntoMuerto pm) {
         int indexActual = camino.indexOf(actual);
 
         // Llega al final del camino (descarga de recursos)
         if (!volviendo && indexActual >= camino.size() - 1) {
         	descargando = true;
             esperar(tiempoEsperaDescarga);
+            GlobalesJuego.dinero += pm.venderALaIndustria(cargaTransportando);
+            Listeners.seGanoDinero();
+            cargaTransportando = 0;
             volviendo = true;
             Collections.reverse(camino); // Invierte la ruta para volver
             actual = camino.get(0);
@@ -95,7 +102,10 @@ public abstract class Vehiculo {
         if (volviendo && indexActual >= camino.size() - 1) {
             cargando = true;
         	esperar(tiempoDeEsperaCarga);
-            volviendo = false;
+        	if(pp.getCantidadAlmacenada() >= this.capacidadDeCarga) {
+        	cargaTransportando = pp.pasarCargaAlVehiculo(this.capacidadDeCarga);
+        	}
+        	volviendo = false;
             Collections.reverse(camino); // Invierte la ruta nuevamente
             actual = camino.get(0);
             siguiente = (camino.size() > 1) ? camino.get(1) : actual;

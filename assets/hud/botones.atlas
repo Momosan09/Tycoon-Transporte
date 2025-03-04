@@ -60,6 +60,13 @@ botonAgregarRutasUp
   orig: 64, 64
   offset: 0, 0
   index: -1
+fondo
+  rotate: false
+  xy: 133, 239
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 textButtonDown
   rotate: false
   xy: 1, 305

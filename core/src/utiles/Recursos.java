@@ -31,5 +31,6 @@ public abstract class Recursos {
 	 
 	 public static final String RUTA_BOTONES = "hud/botones.json";
 	 public static final String RUTA_FONDO = "hud/fondo.png";
+	 public static final String RUTA_FONDO_TABLA = "hud/tablaFondo.png";
 }
 
