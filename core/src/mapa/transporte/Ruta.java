@@ -17,6 +17,7 @@ public class Ruta {
         Collections.reverse(this.camino); // Invierte para que empiece desde la primera tile
 		this.nombre = clave;
 		autos.add(new Auto(0,0,this.camino));
+		
 	}
 	
 	
@@ -34,6 +35,7 @@ public class Ruta {
 	}
 	
 	public void agregarVehiculo() {
-		autos.add(new Auto(0,0,this.camino));
+		 ArrayList<TileTransporte> copiaDelCamino = new ArrayList<>(this.camino);
+		autos.add(new Auto(0,0,copiaDelCamino));
 	}
 }

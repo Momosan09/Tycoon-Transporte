@@ -22,6 +22,7 @@ public abstract class Vehiculo {
     protected TileTransporte actual, siguiente;
     protected boolean volviendo = false, esperando = false, descargando = false, cargando = false;
     protected int tiempoDeEsperaCarga = 2000, tiempoEsperaDescarga = 1000;
+    protected Tiempo tiempo;//No es abstracta porque el metodo static de esperar tiempo trae problemas cuando es mas de un vehiculo esperando. cada vehiculo necesita una instancia propia del tiempo
 
     public Vehiculo(float x, float y, String rutaTextura, float velocidad, int capacidadDeCarga, ArrayList<TileTransporte> camino) {
         this.posicion = new Vector2(x, y);
@@ -29,7 +30,7 @@ public abstract class Vehiculo {
         this.velocidad = velocidad;
         this.capacidadDeCarga = capacidadDeCarga;
         this.camino = new ArrayList<>(camino);
-
+        tiempo = new Tiempo();
 
         this.actual = this.camino.get(0);
         this.siguiente = (this.camino.size() > 1) ? this.camino.get(1) : actual;
@@ -42,10 +43,10 @@ public abstract class Vehiculo {
 
     public void circular() {
         if (esperando) {
-            if (Tiempo.esperarTiempo(2000)) { // Si ya paso el tiempo de espera
+            if (tiempo.esperarTiempo(2000)) { // Si ya paso el tiempo de espera
                 esperando = false;
                 velocidad = 100;
-                Tiempo.reset(); // Reinicia el temporizador para futuras pausas
+                tiempo.reset(); // Reinicia el temporizador para futuras pausas
                 if(descargando) {
                     MAudio.reproducirDescargaDeMercancias();
                     descargando = false;
@@ -111,13 +112,13 @@ public abstract class Vehiculo {
     private void esperar() {
         esperando = true;
         velocidad = 0;
-        Tiempo.esperarTiempo(2000); // Marca que debe esperar
+        tiempo.esperarTiempo(2000); // Marca que debe esperar
     }
     
     private void esperar(int tiempo) {
         esperando = true;
         velocidad = 0;
-        Tiempo.esperarTiempo(tiempo); // Marca que debe esperar
+        this.tiempo.esperarTiempo(tiempo); // Marca que debe esperar
     }
 
     private void setPosicion(float x, float y) {

@@ -67,7 +67,9 @@ public class BarraInfoHud extends Table implements EventoAgregarRuta, EventoObje
 		boton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-            	ruta.agregarVehiculo();
+            	
+            	System.out.println(ruta.nombre);
+            	GlobalesJuego.mapa.getRuta(ruta.nombre).agregarVehiculo();
             	refrescarTextos(ruta);
             }
         });
